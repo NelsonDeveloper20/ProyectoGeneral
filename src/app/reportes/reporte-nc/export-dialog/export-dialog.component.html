@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Seleccione Componentes a Exportar</h1>
+<div mat-dialog-content>
+    
+    <section class="example-section" style="font-size: x-large;">
+        <span class="example-list-section">
+          <mat-checkbox (change)="seleccionarTodos($event)">Seleccionar Todos</mat-checkbox>
+        </span>
+        <span class="example-list-section" style="font-size: smaller;">
+          <ul style="margin-top: -6px; padding: 22px;">
+            <mat-checkbox *ngFor="let componente of componentes" [(ngModel)]="componente.seleccionado" style="display: block;">
+              {{ componente.nombre }}
+            </mat-checkbox>
+          </ul>
+        </span>
+      </section> 
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closePopup()">Cancelar</button>
+  <button mat-button (click)="closePopup2()" class="btn btn-primary">Exportar</button>
+</div>

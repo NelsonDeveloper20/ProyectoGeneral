@@ -1,0 +1,53 @@
+name: Build and Deploy Angular App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install --force
+
+    - name: Build project
+      run: npm run build -- --prod
+
+    - name: Upload production-ready build files
+      uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: dist/fasto
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: build
+        path: dist/fasto
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'AppTractoFront'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ github.workspace }}/dist/fasto  # Ruta correcta para la carpeta de construcción de Angular ./dist/fasto
