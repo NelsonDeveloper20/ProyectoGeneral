@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - AppTractoFront
+name: Build and deploy Node.js app to Azure Web App - dsm-frontend2
 
 on:
   push:
@@ -19,16 +19,22 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: '16.13.0'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
 
+      - name: Install dependencies
+        run: npm install --force
+        
+      - name: Build Angular app
+        run: npm run ng build --prod
+
+      - name: Verify Angular build directory
+        run: ls -R ./dist
+        
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./dist/* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -58,5 +64,11 @@ jobs:
         with:
           app-name: 'AppTractoFront'
           slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F29C281C0A734FE7B25E8DF1C176761E }}
+          package: ./dist
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          
+      - name: Install pm2
+        run: npm install -g pm2
+
+      - name: Start Angular app with pm2
+        run: pm2 start npm --name "my-angular-app" -- run start:prod -- --watch -- --port 8080
