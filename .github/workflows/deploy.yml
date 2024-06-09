@@ -28,7 +28,7 @@ jobs:
         run: npm install --force
         
       - name: Build Angular app
-        run: ng build --prod
+        run: npm run ng build --prod
 
       - name: Verify Angular build directory
         run: ls -R ./dist
