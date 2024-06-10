@@ -32,7 +32,7 @@ export const environment = {
   authority: 'https://login.microsoftonline.com/b5fdc43d-890f-4208-917d-107c711d57cc',
   authRedirectUri: 'https://aprobaciones.panaautos.com.pe', 
   logoutRedirectUri: 'https://aprobaciones.panaautos.com.pe/#/', 
-  baseUrl: 'apptractoback.azurewebsites.net', //
+  baseUrl: 'https://apptractoback.azurewebsites.net', //
   //APIS EXTERNOS
   postLogoutUri:"http://localhost:44304",
   //API GRUPO PANA
