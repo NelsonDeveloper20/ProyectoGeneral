@@ -179,6 +179,7 @@ searchControlCentroCosto = new FormControl('');
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
+
   listScan:any=[];
   listarRegistroScan(){
     this.spinner.show();
@@ -201,18 +202,19 @@ searchControlCentroCosto = new FormControl('');
   listcomponentes:any;
   idSelected:any=0;
   checkboxSeleccionado: boolean = false;
-
+/*
   uncheck(id:any,data: any){ 
     this.listcomponentes=[];
     this.selectedRegistro=[];
-    this.idSelected=id,
-    this.selectedRegistro = data;
     console.log(this.selectedRegistro);
     this.listScan.forEach(registro => {
       if (registro.detalle !== data) {
         registro.checked = false;
       }
     });  
+    
+    this.idSelected=id,
+    this.selectedRegistro = data;
     this.listcomponentes = this.groupByNombre(data); 
     this.spinner.show();
     this._service.GetregistrosVehicular(id)
@@ -228,7 +230,29 @@ searchControlCentroCosto = new FormControl('');
           this.spinner.hide();
         }
       );
-  }    
+  }    */
+      uncheck(id: any, data: any) { 
+        this.selectedRegistro = data;
+        this.listcomponentes = this.groupByNombre(data); 
+        this.spinner.show();
+        this._service.GetregistrosVehicular(id)
+          .subscribe(
+            (response) => {
+              this.spinner.hide();
+              if (response.code == 200) {
+                console.log(response.data);
+                this.photos = response.data; 
+              }
+            },
+            () => {
+              this.spinner.hide();
+            }
+          );      
+        // Desmarcar los otros registros
+        this.listScan.forEach(registro => {
+          registro.checked = registro.detalle === data;
+        });
+      }
   groupByNombre(componentes: any[]) {
     if(componentes){
       const grouped = {};

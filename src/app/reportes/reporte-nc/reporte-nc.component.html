@@ -139,14 +139,22 @@
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
-            
-          <div class="col-lg-1" style="margin: 9px;">
+            <div class="row">
+            <div class="col-lg-2" style="margin: 9px;">
+              <button mat-raised-button color="primary" style="color: white;" (click)="listarRegistroScan()">
+                <mat-icon>search</mat-icon>
+                Refrescas
+              </button>
+            </div>
+          <div class="col-lg-2" style="margin: 9px;">
             <button mat-raised-button color="accent" style="color: white;" (click)="exportToExcel()"
               *ngIf="listScan.length>0">
               <mat-icon>archive</mat-icon>
               Exportar excel
             </button>
           </div>
+        </div>
+          
             <div class="table-responsive">
               <table class="table table-sm mb-0 table-responsive-lg text-black">
                 <thead>
@@ -168,9 +176,9 @@
                     <td class="py-2">
                       <div class="custom-control custom-checkbox checkbox-success">
                         <input type="checkbox" class="custom-control-input" 
-                        [(ngModel)]="checkboxSeleccionado"
-                        id="checkbox-{{registro.id}}" (change)="uncheck(registro.id,registro.detalle)"
-                        [checked]="registro.detalle === selectedRegistro">>
+                               [checked]="registro.detalle === selectedRegistro"
+                               (change)="uncheck(registro.id, registro.detalle)"
+                               id="checkbox-{{registro.id}}">
                         <label class="custom-control-label" for="checkbox-{{registro.id}}"></label>
                       </div>
                     </td>
