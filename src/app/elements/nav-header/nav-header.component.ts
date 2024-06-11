@@ -34,7 +34,7 @@ const ELEMENT_DATA: MenuList[] = [
   { id: 3, nombre: 'Consultas', descripcion: 'descrip', route: "SolicitudPendiente", icon: "markunread_mailbox", tipo: "" },
   { id: 3, nombre: 'Historial Solicitudes', descripcion: 'descrip', route: "Historial-Solicitud", icon: "view_list", tipo: "" },
   { id: 3, nombre: 'Usuarios', descripcion: 'descrip', route: "Usuarios", icon: "supervised_user_circle", tipo: "" },
-  { id: 3, nombre: 'Parametros', descripcion: 'descrip', route: "Parametros", icon: "confirmation_number", tipo: "" },
+  //{ id: 3, nombre: 'Parametros', descripcion: 'descrip', route: "Parametros", icon: "confirmation_number", tipo: "" },
   { id: 3, nombre: 'Reporte', descripcion: 'descrip', route: "Reporte-NC", icon: "donut_small", tipo: "" }
 ];
 @Component({

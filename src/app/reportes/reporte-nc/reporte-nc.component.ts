@@ -232,6 +232,8 @@ searchControlCentroCosto = new FormControl('');
       );
   }    */
       uncheck(id: any, data: any) { 
+        
+    this.idSelected=id;
         this.selectedRegistro = data;
         this.listcomponentes = this.groupByNombre(data); 
         this.spinner.show();
@@ -273,11 +275,11 @@ searchControlCentroCosto = new FormControl('');
     }
   } 
   getPhotoByComponent(id:any){
-   // Llamada al servicio para obtener la foto
+   // Llamada al servicio para obtener la foto 
   this._service.GetPhotoByComponentVehicular(this.idSelected, id)
   .subscribe(
     (response) => {
-      this.spinner.hide();
+      this.spinner.hide(); 
       if(response.code == 200 && response.data.length > 0){
         // Si se encontró la foto, devolver la URL de la foto
         var foto = response.data[0].archivo; 
