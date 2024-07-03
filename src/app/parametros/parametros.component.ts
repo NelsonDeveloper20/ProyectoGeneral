@@ -9,6 +9,8 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { IApiResponse } from '../services/service.model';
 import { NgxSpinnerService } from 'ngx-spinner';
+import Swal from 'sweetalert2';
+import { Toaster } from 'ngx-toast-notifications';
 export interface ListasModel {
   isSelected: boolean;
   id: number;
@@ -16,44 +18,18 @@ export interface ListasModel {
   valor: string;
   isEdit: boolean;
 }
-
 export const UserColumns = [
-    
-  {
-    key: 'descripcion',
-    type: 'text',
-    label: 'Nombre',
-    required: true,
-  },  
-  {
-    key: 'isEdit',
-    type: 'isEdit',
-    label: '',
-  },
+  { key: 'id', type: 'label', label: 'ID', required: true },
+  { key: 'nombre', type: 'text', label: 'Nombre', required: true },
+  { key: 'isEdit', type: 'isEdit', label: 'Acción' }
 ];
-
 
 export const parametroColumns = [
-    
-  {
-    key: 'descripcion',
-    type: 'text',
-    label: 'Nombre',
-    required: true,
-  },   
-  {
-    key: 'valor',
-    type: 'number',
-    label: 'Monto',
-    required: true,
-  },  
-  {
-    key: 'isEdit',
-    type: 'isEdit',
-    label: '',
-  },
+  { key: 'id', type: 'label', label: 'ID', required: true },
+  { key: 'nombre', type: 'text', label: 'Nombre', required: true },
+  { key: 'id_marca', type: 'select', label: 'Marca', required: true },
+  { key: 'isEdit', type: 'isEdit', label: 'Acción' }
 ];
-
 @Component({
   selector: 'app-parametros',
   templateUrl: './parametros.component.html',
@@ -67,133 +43,149 @@ export class ParametrosComponent implements OnInit {
   displayedParametroColumns: string[] = parametroColumns.map((col) => col.key);
   columnsParametroSchema: any = parametroColumns;
 
-  dataSource = new MatTableDataSource<ListasModel>();
-  dataSourceFormaPago = new MatTableDataSource<ListasModel>();
-  dataSourceFormaPagoCarta = new MatTableDataSource<ListasModel>();
-  dataSourceParametro = new MatTableDataSource<ListasModel>();
+  dataSourceVehiculo = new MatTableDataSource<any>();
+  dataSourceMarca = new MatTableDataSource<any>();
+  dataSourceModelo = new MatTableDataSource<any>(); 
   valid: any = {};
 
 private urlBase: string; 
-  constructor(public dialog: MatDialog,
+  constructor(public dialog: MatDialog,private toaster: Toaster,
     private spinner: NgxSpinnerService, private http: HttpClient) {
     
-    this.urlBase = `${environment.baseUrl}/api/listas`;
+    this.urlBase = `${environment.baseUrl}/api/`;
   }
 
  
   ngOnInit() {
    this.listar();
   }
+  
+  getMarcas(): Observable<any> {
+    return this.http.get(this.urlBase + 'marcas').pipe(
+      map((response: any) => response.data.rows)
+    );
+  }
+  getModelo(): Observable<any> {
+    return this.http.get(this.urlBase + 'modelos').pipe(
+      map((response: any) => response.data.rows)
+    );
+  }
+  getTipoVehiculo(): Observable<any> {
+    return this.http.get(this.urlBase + 'tipos').pipe(
+      map((response: any) => response.data.rows)
+    );
+  }
+  listMarcas:any=[];
+  obtenerMarca(id: any) {
+    const marca = this.listMarcas.find(item => item.id_marca === id);
+    return marca ? marca.nombre : '';
+  }
   listar(){
     this.spinner.show();
-    this.getList('Banco').subscribe((res: any) => { 
-      this.dataSource.data = res;
-    });    
-    this.spinner.hide();
+    this.getMarcas().subscribe(
+      (res: any) => {
+        this.listMarcas=res;
+        this.spinner.hide();
+        const result = [];
+        res.forEach(item => {
+          result.push({
+            id: item.id_marca,
+            nombre: item.nombre, 
+            isEdit: false
+          });
+           
+
+        });
+        this.dataSourceMarca.data = result;
+      },
+      error => {
+        this.spinner.hide();
+        console.error('Error fetching marcas:', error);
+      }
+    );
+    this.spinner.show();
+    this.getModelo().subscribe(
+      (res: any) => {
+        this.spinner.hide();
+        const result = [];
+        res.forEach(item => {
+          result.push({ 
+            id: item.id_modelo,
+            id_marca:item.id_marca,
+            nombre: item.nombre,
+            valor: "",
+            isEdit: false
+          });
+        });
+        this.dataSourceModelo.data = result;
+      },
+      error => {
+        this.spinner.hide();
+        console.error('Error fetching marcas:', error);
+      }
+    );
     
     this.spinner.show();
-    this.getList('FormaPago').subscribe((res: any) => { 
-      this.dataSourceFormaPago.data = res;
-    });
-    this.spinner.hide();
-    
-    this.spinner.show();
-    this.getList('FormaPagoCarta').subscribe((res: any) => { 
-      this.dataSourceFormaPagoCarta.data = res;
-    });
-    this.spinner.hide();
-    this.spinner.show();
-    this.getList('Parametro').subscribe((res: any) => { 
-      this.dataSourceParametro.data = res;
-    });
-    this.spinner.show();
-
-    this.getList('Vinculo').subscribe((res: any) => { 
-      this.dataSourceVinculo.data = res;
-    });
-    this.spinner.hide();
-
+    this.getTipoVehiculo().subscribe(
+      (res: any) => {
+        this.spinner.hide();
+        const result = [];
+        res.forEach(item => {
+          result.push({ 
+            id: item.id_tipo,
+            nombre: item.nombre,
+            valor: "",
+            isEdit: false
+          });
+        });
+        this.dataSourceVehiculo.data = result;
+      },
+      error => {
+        this.spinner.hide();
+        console.error('Error fetching marcas:', error);
+      }
+    ); 
   }
 
-  editRow(row,tabla) {
+  editRow(row: any, tabla: string) {
     if (row.id === 0) {
-      this.addUser(row,tabla);
-        row.isEdit = false; 
+      this.addUser(row, tabla);
     } else {
-      this.updateUser(row,tabla); 
-      row.isEdit = false;
+      this.updateUser(row, tabla);
     }
+    row.isEdit = false;
+  }
+  addRowMarca() {
+    const newRow: any = {
+      id: 0,
+      nombre: '',
+      isEdit: true,
+      isSelected: false,
+      valor: ''
+    };
+    this.dataSourceMarca.data = [newRow, ...this.dataSourceMarca.data];
+  }
+
+  addRowModelo() {
+    const newRow: any = {
+      id: 0,
+      nombre: '',
+      isEdit: true,
+      isSelected: false,
+      valor: ''
+    };
+    this.dataSourceModelo.data = [newRow, ...this.dataSourceModelo.data];
   }
 
   addRow() {
-    const newRow: ListasModel = {
+    const newRow: any = {
       id: 0,
-      descripcion: '',  
+      nombre: '',
       isEdit: true,
       isSelected: false,
-      valor:''
+      valor: ''
     };
-    this.dataSource.data = [newRow, ...this.dataSource.data];
-  }
-
-  dataSourceVinculo = new MatTableDataSource<ListasModel>();
-  addRowVinculo() {
-    const newRow: ListasModel = {
-      id: 0,
-      descripcion: '',  
-      isEdit: true,
-      isSelected: false,
-      valor:''
-    };
-    this.dataSourceVinculo.data = [newRow, ...this.dataSourceVinculo.data];
-  }
- 
-  addRowFormaPago() {
-    const newRow: ListasModel = {
-      id: 0,
-      descripcion: '',  
-      isEdit: true,
-      isSelected: false,
-      valor:''
-    };
-    this.dataSourceFormaPago.data = [newRow, ...this.dataSourceFormaPago.data];
-  }
-  addRowFormaPagoCarta() {
-    const newRow: ListasModel = {
-      id: 0,
-      descripcion: '',  
-      isEdit: true,
-      isSelected: false,
-      valor:''
-    };
-    this.dataSourceFormaPagoCarta.data = [newRow, ...this.dataSourceFormaPagoCarta.data];
-  }
-  addRowParametro() {
-    const newRow: ListasModel = {
-      id: 0,
-      descripcion: '',  
-      isEdit: true,
-      isSelected: false,
-      valor:''
-    };
-    this.dataSourceParametro.data = [newRow, ...this.dataSourceParametro.data];
-  }
- 
- 
-
-  isAllSelected() {
-    return this.dataSource.data.every((item) => item.isSelected);
-  }
-
-  isAnySelected() {
-    return this.dataSource.data.some((item) => item.isSelected);
-  }
-
-  selectAll(event) {
-    this.dataSource.data = this.dataSource.data.map((item) => ({
-      ...item,
-      isSelected: event.checked,
-    }));
+    this.dataSourceVehiculo.data = [newRow, ...this.dataSourceVehiculo.data];
   }
 
   inputHandler(e: any, id: number, key: string) {
@@ -208,99 +200,171 @@ private urlBase: string;
       return Object.values(this.valid[id]).some((item) => item === false);
     }
     return false;
-  } 
-  //
-  //apis
-     
-  getList(tabla:string): Observable<ListasModel[]> {
-    return this.http
-      .get(this.urlBase+'?table='+tabla)
-      .pipe<ListasModel[]>(map((data: any) => data));
-  }
-cancelar(element:any){
-  element.isEdit = !element.isEdit;
-  
-  this.listar();
-}
-  updateUser(user: ListasModel,tabla:string) {   
-
-    this.spinner.show();
-    const formData = new FormData();
-    formData.append('ids', user.id.toString());
-    formData.append('nombre', user.descripcion);
-    formData.append('accion', "modificar");
-    formData.append('tabla', tabla); 
-    formData.append('valor', user.valor); 
-    this.http.post<IApiResponse>(`${this.urlBase}`, formData).subscribe(
-        (response: IApiResponse) => {
-          // La solicitud se completó correctamente, se recibió una respuesta exitosa.
-          // Puedes acceder a los datos de la respuesta utilizando la variable "response". 
-    
-          this.spinner.hide();
-          this.listar();
-    
-    
-        },
-        (error: any) => {
-          // Ocurrió un error en la solicitud.
-          // Puedes manejar el error aquí mostrando un mensaje al usuario o realizando otras acciones necesarias.
-          console.error(error);
-    this.spinner.hide();
-        }
-      );
   }
 
-  addUser(user: ListasModel,tabla:string){
-    
-    this.spinner.show();
-    const formData = new FormData();
-    formData.append('ids', user.id.toString());
-    formData.append('nombre', user.descripcion);
-    formData.append('accion', "agregar");
-    formData.append('tabla', tabla); 
-    formData.append('tabla', user.valor); 
-      this.http.post<IApiResponse>(`${this.urlBase}`, formData).subscribe(
-        (response: IApiResponse) => {
-          // La solicitud se completó correctamente, se recibió una respuesta exitosa.
-          // Puedes acceder a los datos de la respuesta utilizando la variable "response".
-         
-    this.spinner.hide();
+  cancelar(element: any) {
+    element.isEdit = !element.isEdit;
     this.listar();
-        },
-        (error: any) => {
-          // Ocurrió un error en la solicitud.
-          // Puedes manejar el error aquí mostrando un mensaje al usuario o realizando otras acciones necesarias.
-          console.error(error);
-          
-    this.spinner.hide();
-        }
-      );
-
   }
-
-  deleteUser(id: number,tabla:string) {
-    
-    this.spinner.show();
-    const formData = new FormData();
-    formData.append('ids', id.toString());
-    formData.append('nombre', "");
-    formData.append('accion', "eliminar");
-    formData.append('tabla', tabla); 
-  this.http.post<IApiResponse>(`${this.urlBase}`, formData).subscribe(
-    (response: IApiResponse) => {
-    
-      this.spinner.hide();
-    this.listar();
-    },
-    (error: any) => {
-      // Ocurrió un error en la solicitud.
-      // Puedes manejar el error aquí mostrando un mensaje al usuario o realizando otras acciones necesarias.
-      
-    this.spinner.hide();
-      console.error(error);
+  updateUser(dato: any, tabla: string) {
+    console.log("edicion");
+    console.log(dato);
+    let api = "";
+    let body = {}; // Objeto para enviar en el cuerpo de la solicitud
+    switch (tabla) {
+      case "Marca":
+        body = {
+          id_marca: dato.id,
+          nombre: dato.nombre
+        };
+        api = "marcas/update";
+        break;
+      case "Modelo":
+        body = {
+          id_modelo: dato.id,
+          id_marca: dato.id_marca,
+          nombre: dato.nombre
+        };
+        api = "modelos/update";
+        break;
+      case "Vehiculo":
+        body = {
+          id_tipo: dato.id,
+          nombre: dato.nombre
+        };
+        api = "tipos/update";
+        break;
     }
-  );
-  
+    this.spinner.show();
+    console.log(body);
+    this.http.put<IApiResponse>(`${this.urlBase}${api}`, body).subscribe(
+      (response: IApiResponse) => {
+        this.spinner.hide();
+        this.toaster.open({
+          text: "Modificado correctamente",
+          caption: 'Mensaje',
+          type: 'success',
+          position:'top-right'
+        }); 
+        this.listar();
+      },
+      (error: any) => {
+        console.error(error);
+        this.toaster.open({
+          text: 'Ocurrio un error: '+error,
+          caption: 'Mensaje',
+          type: 'danger',
+        });
+        this.spinner.hide();
+        this.listar();
+      }
+    );
   }
- 
-} 
+  
+  addUser(dato: any, tabla: string) {
+    console.log("agregar");
+    console.log(dato);
+    let api = "";
+    let body = {}; // Objeto para enviar en el cuerpo de la solicitud
+    switch (tabla) {
+      case "Marca":
+        body = {
+          id_marca: 0,
+          nombre: dato.nombre
+        };
+        api = "marcas/register";
+        break;
+      case "Modelo":
+        body = {
+          id_modelo: 0,
+          id_marca: dato.id_marca,
+          nombre: dato.nombre
+        };
+        api = "modelos/register";
+        break;
+      case "Vehiculo":
+        body = {
+          id_tipo: 0,
+          nombre: dato.nombre
+        };
+        api = "tipos/register";
+        break;
+    }
+    console.log(body);
+    this.spinner.show();
+    this.http.post<IApiResponse>(`${this.urlBase}${api}`, body).subscribe(
+      (response: IApiResponse) => {
+        this.spinner.hide();
+        this.toaster.open({
+          text: "Agregado correctamente",
+          caption: 'Mensaje',
+          type: 'success',
+          position:'top-right'
+        }); 
+        this.listar();
+      },
+      (error: any) => {
+        this.toaster.open({
+          text: 'Ocurrio un error: '+error,
+          caption: 'Mensaje',
+          type: 'danger',
+        });
+        console.error(error);
+        this.spinner.hide();
+        this.listar();
+      }
+    );
+  }
+
+  deleteUser(id: number, tabla: string) {
+    Swal.fire({
+      title: '¿Estás seguro de eliminar?',
+      text: 'Esta acción no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+    let api = ""; 
+    switch (tabla) {
+      case "Marca": 
+        api = "marcas";
+        break;
+      case "Modelo": 
+        api = "modelos";
+        break;
+      case "Vehiculo": 
+        api = "tipos";
+        break;
+    }
+    this.spinner.show();
+    this.http.delete<IApiResponse>(`${this.urlBase}` + api+"/"+id).subscribe(
+      (response: IApiResponse) => {
+        this.spinner.hide();
+        this.toaster.open({
+          text: "Eliminado correctamente",
+          caption: 'Mensaje',
+          type: 'success',
+          position:'top-right'
+        }); 
+        this.listar();
+      },
+      (error: any) => {
+        console.error(error);
+        this.toaster.open({
+          text: 'Ocurrio un error: '+error,
+          caption: 'Mensaje',
+          type: 'danger',
+        });
+        this.spinner.hide();
+        this.listar();
+      }
+    );
+  }
+  });
+  }
+
+}

@@ -29,7 +29,7 @@ export const environment = {
   authority: 'https://login.microsoftonline.com/b5fdc43d-890f-4208-917d-107c711d57cc',
   authRedirectUri: 'http://localhost:4200',
   logoutRedirectUri: 'http://localhost:4200', 
-  baseUrl: 'http://192.168.0.2', //API
+  baseUrl: 'http://192.168.0.6', //API
   //APIS EXTERNOS
   postLogoutUri:"http://localhost:4200",
   //API GRUPO PANA

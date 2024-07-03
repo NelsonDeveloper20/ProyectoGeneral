@@ -245,6 +245,7 @@ import { CartaSnCruzadaComponent } from './op-sin-nota-credito/carta-sn-cruzada/
 import { SolFormSnCartacruzadaComponent } from './sol-form-sn-cartacruzada/sol-form-sn-cartacruzada.component';
 import { VhAnulacioFacturanDevolucionClienteComponent } from './op-con-nota-credito/vh-anulacion-factura-devolucion-cliente/vh-anulacion-factura-devolucion-cliente.component';
 import { ExportDialogComponent } from './reportes/reporte-nc/export-dialog/export-dialog.component';
+import { MantenimientoComponent } from './mantenimiento/mantenimiento.component';
 //IMPORT 
 
 @NgModule({
@@ -374,7 +375,7 @@ import { ExportDialogComponent } from './reportes/reporte-nc/export-dialog/expor
          FilesEpdpComponent, FormularioEpdpComponent, PagoExcesoComponent,
           PagoEpdpParcialComponent, ModalFormsComponent, ParametrosComponent,
            ModalUnidadComponent, SolicitudPendienteComponent, ReporteNCComponent,
-            CartaSnCruzadaComponent, SolFormSnCartacruzadaComponent, ExportDialogComponent,  
+            CartaSnCruzadaComponent, SolFormSnCartacruzadaComponent, ExportDialogComponent, MantenimientoComponent,  
   ],
   imports: [  
     MatSelectFilterModule ,//filter

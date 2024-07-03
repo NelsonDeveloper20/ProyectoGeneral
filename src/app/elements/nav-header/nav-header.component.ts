@@ -34,7 +34,7 @@ const ELEMENT_DATA: MenuList[] = [
   { id: 3, nombre: 'Consultas', descripcion: 'descrip', route: "SolicitudPendiente", icon: "markunread_mailbox", tipo: "" },
   { id: 3, nombre: 'Historial Solicitudes', descripcion: 'descrip', route: "Historial-Solicitud", icon: "view_list", tipo: "" },
   { id: 3, nombre: 'Usuarios', descripcion: 'descrip', route: "Usuarios", icon: "supervised_user_circle", tipo: "" },
-  //{ id: 3, nombre: 'Parametros', descripcion: 'descrip', route: "Parametros", icon: "confirmation_number", tipo: "" },
+  { id: 3, nombre: 'Mantenimiento', descripcion: 'descrip', route: "Parametros", icon: "settings_applications", tipo: "" },
   { id: 3, nombre: 'Reporte', descripcion: 'descrip', route: "Reporte-NC", icon: "donut_small", tipo: "" }
 ];
 @Component({
@@ -117,80 +117,6 @@ export class NavHeaderComponent implements OnInit {
     console.log('Unidad seleccionada:', this.UnidadSelected);
   }
   ngOnInit(): void { 
-    /*
-    if (this.UserLogin == true) {
-      this.spinner.show();
-      this.getProfile();
-      this.authServiceApi
-        .getTokenJlr()
-        .pipe(
-          finalize(() => {
-            this.spinner.hide();
-          })
-        )
-        .subscribe((response) => {
-          if (response.status === 200) { 
-            const userRol = JSON.parse(JSON.stringify(response.json)).user;
-            var roles = userRol.roles;
-            localStorage.setItem('RolsUser', `${JSON.stringify(roles)}`);
-            this.authServiceApi.setTokenJrl(response?.json);
-            //this.roles.push(response?.json.rol.toLowerCase());
-
-            //OBTENER UNIDADES DE NEGOCIO ASIGNADOS AL USUARIO
-const jsonString = localStorage.getItem('RolsUser'); 
-if (jsonString) { 
-  const jsonObject = JSON.parse(jsonString); 
-  const unidades = []; 
-  jsonObject.forEach(element => { 
-    // Verificar si la unidad ya está en el arreglo unidades
-    const unidadExiste = unidades.some(item => {
-      return item.descripcion.toLowerCase() === element.unidad.descripcion.toLowerCase();
-    });
-
-    // Si la unidad no existe en el arreglo unidades, agregarla
-    if (!unidadExiste) {
-      unidades.push(element.unidad);
-    }  
-  });     
-
-  this.unidadesUser = unidades;  
-
-  if(this.unidadesUser.length==1){     
-    var unidad=unidades[0].descripcion;
-    localStorage.setItem('unselected_',unidad); 
-    this.UnidadSelected=unidades[0];
-  }
-  
-  const unidadLocal = localStorage.getItem('unselected_'); 
-  if(unidadLocal){
-
-    const unidadExiste = unidades.filter(item => {
-      return item.descripcion.toLowerCase() === unidadLocal.toLowerCase();
-    }); 
-    this.UnidadSelected=unidadExiste[0];
-  }
-
-}
-
-            this.filtrarElementosMenu();
-            this.router.navigate(['/Home-main']);
-          } else {
-
-            this.toaster.open({
-              text: "Usuario no encontrado en la base de datos",
-              caption: 'Mensaje',
-              type: 'danger',
-              position: 'top-right'
-            });
-            this.UserLogin = false;// true;
-
-            //this.azureAdDemoSerice.isUserLoggedIn.next(this.isUserLoggedIn);
-
-            // this.authService.loginRedirect();
-            // this.router.navigate(['/']);
-          }
-        });
-    }*/
     
     this.filtrarElementosMenu();
   }
@@ -202,7 +128,7 @@ if (jsonString) {
           'Solic. Pendiente', 'Reporte NC'
         ],
         */
-        admins: ['Inicio',   'Usuarios', 'Parametros',
+        admins: ['Inicio',   'Usuarios', 'Mantenimiento',
         'Consultas', 'Reporte'
       ],
         asesor: ['Inicio', 'Solicitudes', 'Historial Solicitudes',
