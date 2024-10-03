@@ -18,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
 import { RegistroVehicularService } from 'src/app/services/registrovehicular.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ExportDialogComponent } from './export-dialog/export-dialog.component';
+import { DetalleDialogComponent } from './detalle-dialog/detalle-dialog.component';
 
 @Component({
   selector: 'app-reporte-nc',
@@ -231,30 +232,7 @@ searchControlCentroCosto = new FormControl('');
         }
       );
   }    */
-      uncheck(id: any, data: any) { 
-        
-    this.idSelected=id;
-        this.selectedRegistro = data;
-        this.listcomponentes = this.groupByNombre(data); 
-        this.spinner.show();
-        this._service.GetregistrosVehicular(id)
-          .subscribe(
-            (response) => {
-              this.spinner.hide();
-              if (response.code == 200) {
-                console.log(response.data);
-                this.photos = response.data; 
-              }
-            },
-            () => {
-              this.spinner.hide();
-            }
-          );      
-        // Desmarcar los otros registros
-        this.listScan.forEach(registro => {
-          registro.checked = registro.detalle === data;
-        });
-      }
+   
   groupByNombre(componentes: any[]) {
     if(componentes){
       const grouped = {};
@@ -274,39 +252,7 @@ searchControlCentroCosto = new FormControl('');
       return [];
     }
   } 
-  getPhotoByComponent(id:any){
-   // Llamada al servicio para obtener la foto 
-  this._service.GetPhotoByComponentVehicular(this.idSelected, id)
-  .subscribe(
-    (response) => {
-      this.spinner.hide(); 
-      if(response.code == 200 && response.data.length > 0){
-        // Si se encontró la foto, devolver la URL de la foto
-        var foto = response.data[0].archivo; 
-       // var fotobase64=   this.getBase64Image(foto);
-        this.openImageInNewTab(foto);
-      } 
-    },
-    () => { 
-     
-    }
-  );
-  }
-  openImageInNewTab(base64Image: string) {
-    const byteCharacters = atob(base64Image);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'image/png' });
-    const url = URL.createObjectURL(blob);
-    window.open(url);
-  }
-  // Método para convertir base64 a URL de imagen
-  getBase64Image(base64: string): string {
-    return `data:image/jpeg;base64,${base64}`;
-  }
+ 
   exportToExcel(): void {    
 this.openPopup();
     /*
@@ -328,14 +274,65 @@ this.openPopup();
         
     const componentesFiltro = result.toLowerCase().split(',').map(componente => componente.trim());
     this.listExport = this.generateTableData().filter(item => componentesFiltro.includes(item.componente.toLowerCase()));
+    console.log("exxxport");
+    console.log(JSON.stringify(this.listExport));
+    this.exportToExcel2();
+/*
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.listExport);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, 'Reporte.xlsx');
+    */
       }
     });
   }
-  
+  exportToExcel2() {
+    const exportData = this.listExport.flatMap(item => {
+      // Analiza el valor del campo JSON
+      const valueData = JSON.parse(item.valor.replace(/\\n/g, '').replace(/\\'/g, "'"));
+      
+      // Crea un array para almacenar las filas a exportar
+      const rows: any[] = [];
+
+      // Función para procesar el objeto dinámico
+      const processObject = (obj: any, parentKey: string) => {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const newKey = parentKey ? `${parentKey}.${key}` : key;
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              // Si la clave es un objeto, llama a la función recursivamente
+              processObject(obj[key], newKey);
+            } else {
+              // Agrega la fila con el atributo y valor
+              rows.push({
+                marca: item.marca,
+                modelo: item.modelo,
+                tipoVehiculo: item.tipoVehiculo,
+                vin: item.vin,
+                fecha: item.fecha,
+                componente: item.componente,
+                atributo: newKey,
+                valor: obj[key],
+              });
+            }
+          }
+        }
+      };
+
+      // Procesa el objeto valueData
+      processObject(valueData, '');
+
+      return rows;
+    });
+
+    // Crea un nuevo libro de trabajo
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+
+    // Exporta el archivo Excel
+    XLSX.writeFile(wb, 'reporte.xlsx');
+  }
   listExport:any=[]; 
   generateTableData(): any[] {
     const tableData: any[] = [];
@@ -373,8 +370,46 @@ this.openPopup();
     return tableData;
   } 
   
-    
+  async openPopupDetalle(id: number, data: any) {
+    this.listcomponentes = [];
+    this.photos = [];
+    this.selectedRegistro = data;
+    this.spinner.show();
   
+    // Agrupamos los componentes
+    this.listcomponentes = this.groupByNombre(data);
   
+    try {
+      // Convertir la llamada a la API a una promesa
+      const response = await this._service.GetregistrosVehicular(id).toPromise();
+      
+      if (response.code === 200) {
+        console.log(response.data);
+        this.photos = response.data; 
+      } else {
+        console.error('Error en la respuesta:', response.message);
+      }
+    } catch (error) {
+      console.error('Error al obtener registros vehiculares:', error);
+    } finally {
+      // Siempre ocultar el spinner al final
+      this.spinner.hide();
+    }
+  
+    // Abrir el diálogo después de que se complete la llamada
+    const dialogRef = this.dialog.open(DetalleDialogComponent, {
+      width: '80%', // Ancho del 80% de la ventana del navegador
+      maxWidth: '1200px', // Ancho máximo de 1200px
+      data: { listcomponentes: this.listcomponentes, photos: this.photos, idSelected: id }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El popup se cerró');
+      if (result) {
+        console.log('El usuario hizo clic en Aceptar');
+      }
+    });
+  }
+   
 }
 

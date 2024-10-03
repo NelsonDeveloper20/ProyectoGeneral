@@ -27,7 +27,7 @@ export class UserService {
   private urlBase2: string;
   constructor(private apiService: ApiService) {
     this.urlBase = `${environment.baseUrl}/api/users`;
-    this.urlBase2 = `${environment.baseUrl}/api/`;
+    this.urlBase2 = `${environment.baseUrl}/api/componentes`;
   }
 
 
@@ -81,5 +81,13 @@ export class UserService {
     body?: IModificarEstadoUsuarioRequest
   ): Observable<IUsuarioResponse> {
     return this.apiService.put(`${this.urlBase}/${userId}/state`, body);
+  }
+
+
+  registerComponente(body: IAgregarUsuarioRequest): Observable<any> {
+    return this.apiService.post(`${this.urlBase2}/register`, body);
+  }
+  UpdateComponente(body: IAgregarUsuarioRequest): Observable<any> {
+    return this.apiService.put(`${this.urlBase2}`, body);
   }
 }

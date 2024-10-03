@@ -7,6 +7,11 @@
  type="ball-beat"
  [fullScreen]="true"
  ><p style="color: black">Loading...</p></ngx-spinner>        
+ <style>
+  .table-responsive{
+    max-height: 410px !important;
+  }
+ </style>
 <div class="">
     <div class="card-header card-header-warning" style="  margin-top: 60px;  width: 9%; 
     padding-top: 0px;"> 
@@ -29,45 +34,49 @@
                         </div>
                       </div>
               
-                      <table mat-table [dataSource]="dataSourceMarca" style="margin-top: 5px;">
-                        <!-- Columnas de la tabla de Marca -->
-                        <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
-                          
-                           <th mat-header-cell  *matHeaderCellDef [ngSwitch]="col.key" style="text-align: center;">
-                            <span *ngSwitchDefault>{{ col.label }}</span>
-                          </th> 
-                          <td mat-cell *matCellDef="let element" style="text-align: center;">
-                            <div [ngSwitch]="col.type" *ngIf="!element.isEdit">
-                              <!-- Mostrar datos sin editar -->
-                              <span *ngSwitchCase="'date'">{{ element[col.key] | date: 'mediumDate' }}</span>
-                              <span *ngSwitchDefault>{{ element[col.key] }}</span>
-                              <div class="btn-edit" *ngSwitchCase="'isEdit'">
-                                <button mat-button (click)="element.isEdit = !element.isEdit">Editar</button>
-                                <button mat-button class="button-remove" (click)="deleteUser(element.id, 'Marca')">Eliminar</button>
+                      <div class="table-responsive">
+                        <table mat-table [dataSource]="dataSourceMarca" style="margin-top: 5px;">
+                          <!-- Columnas de la tabla de Marca -->
+                          <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
+                            
+                             <th mat-header-cell  *matHeaderCellDef [ngSwitch]="col.key" style="text-align: center;">
+                              <span *ngSwitchDefault>{{ col.label }}</span>
+                            </th> 
+                            <td mat-cell *matCellDef="let element" style="text-align: center;">
+                              <div [ngSwitch]="col.type" *ngIf="!element.isEdit">
+                                <!-- Mostrar datos sin editar -->
+                                <span *ngSwitchCase="'date'">{{ element[col.key] | date: 'mediumDate' }}</span>
+                                <span *ngSwitchDefault>{{ element[col.key] }}</span>
+                                <div class="btn-edit" *ngSwitchCase="'isEdit'">
+                                  <button mat-button (click)="element.isEdit = !element.isEdit">Editar</button>
+                                  <button mat-button class="button-remove" (click)="deleteUser(element.id, 'Marca')">Eliminar</button>
+                                </div>
                               </div>
-                            </div>
-                            <div [ngSwitch]="col.type" *ngIf="element.isEdit">
-                              <!-- Mostrar campos de edición -->
-                              <div *ngSwitchCase="'isSelected'"></div>
-                              <div class="btn-edit" *ngSwitchCase="'isEdit'">
-                                <button mat-button (click)="editRow(element, 'Marca')" [disabled]="disableSubmit(element.id)">
-                                  Guardar
-                                </button>
-                                <button mat-button (click)="cancelar(element)">Cancelar</button>
+                              <div [ngSwitch]="col.type" *ngIf="element.isEdit">
+                                <!-- Mostrar campos de edición -->
+                                <div *ngSwitchCase="'isSelected'"></div>
+                                <div class="btn-edit" *ngSwitchCase="'isEdit'">
+                                  <button mat-button (click)="editRow(element, 'Marca')" [disabled]="disableSubmit(element.id)">
+                                    Guardar
+                                  </button>
+                                  <button mat-button (click)="cancelar(element)">Cancelar</button>
+                                </div>
+                
+                                <!-- Input para editar nombre -->
+                                <mat-form-field class="form-input" *ngSwitchCase="'text'">
+                                  <input matInput [required]="col.required" [type]="col.type" [(ngModel)]="element[col.key]"
+                                    (change)="inputHandler($event, element.id, col.key)" />
+                                </mat-form-field>
                               </div>
-              
-                              <!-- Input para editar nombre -->
-                              <mat-form-field class="form-input" *ngSwitchCase="'text'">
-                                <input matInput [required]="col.required" [type]="col.type" [(ngModel)]="element[col.key]"
-                                  (change)="inputHandler($event, element.id, col.key)" />
-                              </mat-form-field>
-                            </div>
-                          </td>
-                        </ng-container>
-                        <!-- Definición de las filas y columnas -->
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                      </table>
+                            </td>
+                          </ng-container>
+                          <!-- Definición de las filas y columnas -->
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                        </table>
+
+                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -84,7 +93,7 @@
                           <button class="button-add-row" mat-button (click)="addRowModelo()">Agregar</button>
                         </div>
                       </div>
-              
+                      <div class="table-responsive">
                       <table mat-table [dataSource]="dataSourceModelo">
                         <!-- Columnas de la tabla de Modelo -->
                         <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsParametroSchema">
@@ -131,7 +140,7 @@
                         <!-- Definición de las filas y columnas -->
                         <tr mat-header-row *matHeaderRowDef="displayedParametroColumns"></tr>
                         <tr mat-row *matRowDef="let row; columns: displayedParametroColumns"></tr>
-                      </table>
+                      </table></div>
                     </div>
                   </div>
                 </div>
@@ -148,7 +157,7 @@
                           <button class="button-add-row" mat-button (click)="addRow()">Agregar</button>
                         </div>
                       </div>
-              
+                      <div class="table-responsive">
                       <table mat-table [dataSource]="dataSourceVehiculo" style="margin-top: 5px;">
                         <!-- Columnas de la tabla de Tipo Vehículo -->
                         <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
@@ -186,7 +195,7 @@
                         <!-- Definición de las filas y columnas -->
                         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                      </table>
+                      </table></div>
                     </div>
                   </div>
                 </div>

@@ -1,0 +1,13 @@
+<table class="table table-sm mb-0 text-black">
+    <tr *ngFor="let key of getKeys(data)">
+      <td><strong>{{ key }}:</strong></td>
+      <td>
+        <ng-container *ngIf="isObject(data[key]); else simpleValue">
+          <!-- Llamada recursiva para manejar JSON anidado -->
+          <app-json-table [data]="data[key]"></app-json-table>
+        </ng-container>
+        <ng-template #simpleValue>{{ data[key] }}</ng-template>
+      </td>
+    </tr>
+  </table>
+  

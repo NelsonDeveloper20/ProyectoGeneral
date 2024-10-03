@@ -31,9 +31,9 @@ const ELEMENT_DATA: MenuList[] = [
   { id: 2, nombre: 'OP. Con Nota de Crédito', descripcion: 'descrip', route: "CN-NotaCredito", icon: "receipt", tipo: "" },
   { id: 3, nombre: 'OP. Sin Nota Crédito', descripcion: 'descrip', route: "SN-NotaCredito", icon: "drive_eta", tipo: "" },
   { id: 3, nombre: 'Solicitudes', descripcion: 'descrip', route: "SolicitudAdv", icon: "markunread_mailbox", tipo: "" },
-  { id: 3, nombre: 'Consultas', descripcion: 'descrip', route: "SolicitudPendiente", icon: "markunread_mailbox", tipo: "" },
+  //{ id: 3, nombre: 'Consultas', descripcion: 'descrip', route: "SolicitudPendiente", icon: "markunread_mailbox", tipo: "" },
   { id: 3, nombre: 'Historial Solicitudes', descripcion: 'descrip', route: "Historial-Solicitud", icon: "view_list", tipo: "" },
-  { id: 3, nombre: 'Usuarios', descripcion: 'descrip', route: "Usuarios", icon: "supervised_user_circle", tipo: "" },
+  { id: 3, nombre: 'Man. Componentes', descripcion: 'descrip', route: "Usuarios", icon: "supervised_user_circle", tipo: "" },
   { id: 3, nombre: 'Mantenimiento', descripcion: 'descrip', route: "Parametros", icon: "settings_applications", tipo: "" },
   { id: 3, nombre: 'Reporte', descripcion: 'descrip', route: "Reporte-NC", icon: "donut_small", tipo: "" }
 ];
@@ -128,7 +128,7 @@ export class NavHeaderComponent implements OnInit {
           'Solic. Pendiente', 'Reporte NC'
         ],
         */
-        admins: ['Inicio',   'Usuarios', 'Mantenimiento',
+        admins: ['Inicio',   'Man. Componentes', 'Mantenimiento',
         'Consultas', 'Reporte'
       ],
         asesor: ['Inicio', 'Solicitudes', 'Historial Solicitudes',
