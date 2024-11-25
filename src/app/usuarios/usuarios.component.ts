@@ -133,7 +133,7 @@ unidadToString(roles: RolUsuarioResponse[]): string {
             position:'bottom-right'
           });
 
-          this.ObtenerModulosPorRol();
+          this.ListarComponentes(); 
 //init
  
           //end
@@ -171,7 +171,7 @@ unidadToString(roles: RolUsuarioResponse[]): string {
           position:'bottom-right'
         });
        // this.getuser();
-      this.ObtenerModulosPorRol();
+      this.ListarComponentes();
       } 
     });
   }
@@ -311,7 +311,7 @@ createComponent(id:any){
 }
 //////
 
-IdComponente=2;
+IdComponente=0;
 Nombre="";
 
      

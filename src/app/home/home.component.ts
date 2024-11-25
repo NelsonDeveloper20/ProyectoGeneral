@@ -1,11 +1,14 @@
 import { Component, OnInit ,ViewChild} from '@angular/core'; 
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import {SharedService} from '../shared.service';
 
 //main
 
 import { MatSidenav } from '@angular/material/sidenav';
 import { AzureAdDemoService } from '../azure-ad-demo.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -18,8 +21,12 @@ export class HomeComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   loginDisplay = false;
   hamburgerClass: boolean = false;
-  constructor( private azureAdDemoService:AzureAdDemoService
-    ) { }
+  
+  private readonly _destroying$ = new Subject<void>();
+  constructor( private azureAdDemoService:AzureAdDemoService,
+  
+    private router: Router,  
+    private authService: AuthService  ) { }
 
   ngOnInit(): void {
   /*
@@ -48,5 +55,11 @@ export class HomeComponent implements OnInit {
       this.isShowing = false;
     }
   }
-
+  logout() {
+    console.log("CERRANDO home");
+      takeUntil(this._destroying$)
+    this.authService.logout(); 
+    
+    // }
+  }
 }

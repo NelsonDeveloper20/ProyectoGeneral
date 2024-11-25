@@ -58,44 +58,7 @@ if(login){
         this.azureAdDemoSerice.isUserLoggedIn.next(this.isUserLoggedIn);
         this.router.navigate(['/Home-main']);
 }
-   /*
-    this.msalBroadCastService.msalSubject$.pipe
-    (filter(
-      
-      (msg: EventMessage) =>
-        msg.eventType === EventType.LOGIN_SUCCESS ||
-        msg.eventType === EventType.ACQUIRE_TOKEN_SUCCESS 
-    ),
-    takeUntil(this._destroy))
-    .subscribe(async (result) =>
-      {
-        this.isUserLoggedIn=this.authService.instance.getAllAccounts().length>0; 
-        if (result.payload) {
-          localStorage.setItem('tokenMsal', (result.payload as any)['accessToken']);
-          localStorage.setItem('idTokenMsal', (result.payload as any)['idToken']);
-        }
-        if(this.isUserLoggedIn)
-        {
-          this.userName = this.authService.instance.getAllAccounts()[0].name;
-       //   console.log(this.authService.instance.getAllAccounts());
-        // this.router.navigate(['/Home-main']);
-        }
-        this.azureAdDemoSerice.isUserLoggedIn.next(this.isUserLoggedIn);
-      }       ,
-     () => {
-      console.log('er');
-     }
-     
-      
-      ); 
-
-  if(this.authService.instance.getAllAccounts().length<1){
-    this.router.navigate(['/']);
-  }else{
-    this.isUserLoggedIn=true;
-    //this.router.navigate(['/Home-main']);
-
-  }*/
+   
  
   } 
   ngOnDestroy(): void {
@@ -107,19 +70,7 @@ if(login){
   login()
   {
     this.iniciarSession();
-    /*
-    this.isUserLoggedIn=true;
-    this.azureAdDemoSerice.isUserLoggedIn.next(this.isUserLoggedIn);
-    this.router.navigate(['/Home-main']);*/
-    /*
-    if(this.msalGuardConfig.authRequest)
-    {
-      this.authService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest)
-    }
-    else
-    {
-      this.authService.loginRedirect();
-    }*/
+    
   }
   username: string = '';
   password: string = '';

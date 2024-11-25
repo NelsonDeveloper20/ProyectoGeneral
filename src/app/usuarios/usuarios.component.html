@@ -47,7 +47,7 @@
 
   (change)="onComponenteChange($event)"
           >
-            <option value="">Seleccionar</option>
+            <option value="0">Seleccionar</option>
             <option *ngFor="let item of listComponente" [value]="item.id_componente"
             >
               {{ item.nombre }}
@@ -79,10 +79,10 @@
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns22"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns22;"></tr>
-        </table>
-		<div class="col-lg-12" style="text-align: center;    padding: 15px;" *ngIf="listComponenteModelos">
-			<button mat-button class="btn btn-sm btn-primary" (click)="save()">Guardar Cambios</button>
-		</div>
+        </table><div class="col-lg-12" style="text-align: center; padding: 15px;" *ngIf="listComponenteModelos.length > 0 && IdComponente!=0">
+          <button mat-button class="btn btn-sm btn-primary" (click)="save()">Guardar Cambios</button>
+      </div>
+      
       </div>
     </div>
   </div>
@@ -103,7 +103,7 @@
             <mat-icon>add_box</mat-icon>
           </button>
 
-          <table mat-table [dataSource]="dataSourceComponente" matSort style="width: 100% !important;"
+          <table mat-table [dataSource]="dataSourceComponente" matSort class="table table-sm mb-0 text-black"  style="width: 100% !important;"
           >
             <!-- ID Column [(ngModel)]="searchs"-->
             <ng-container matColumnDef="id">

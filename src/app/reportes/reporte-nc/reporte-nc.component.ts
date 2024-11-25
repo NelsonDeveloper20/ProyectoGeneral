@@ -273,6 +273,8 @@ this.openPopup();
         console.log('El popup se cerró debe exportar');
         
     const componentesFiltro = result.toLowerCase().split(',').map(componente => componente.trim());
+    console.log("a exportar==>");
+    console.log(componentesFiltro);
     this.listExport = this.generateTableData().filter(item => componentesFiltro.includes(item.componente.toLowerCase()));
     console.log("exxxport");
     console.log(JSON.stringify(this.listExport));

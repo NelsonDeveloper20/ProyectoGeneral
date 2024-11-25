@@ -177,15 +177,15 @@ export class NavHeaderComponent implements OnInit {
         localStorage.setItem('UserLog', profileInfo.displayName);
       })
   }
-  logout() { 
-    
+  logout() {  
     sessionStorage.removeItem("userlog");
+    localStorage.removeItem("userlog");
     this.isUserLoggedIn=false;
     this.azureAdDemoSerice.isUserLoggedIn.next(this.isUserLoggedIn);
     //this.router.navigate(['/Home-main']); 
     this.router.navigate(['/']);
     //this.authService.logout();
-
+    window.location.reload();
    // this.authService.logoutRedirect({ postLogoutRedirectUri: environment.authRedirectUri });
   }
   toggleHamburgerClass() {

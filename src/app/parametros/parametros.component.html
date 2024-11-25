@@ -35,7 +35,7 @@
                       </div>
               
                       <div class="table-responsive">
-                        <table mat-table [dataSource]="dataSourceMarca" style="margin-top: 5px;">
+                        <table mat-table [dataSource]="dataSourceMarca" class="table table-sm mb-0 text-black"  style="margin-top: 5px;">
                           <!-- Columnas de la tabla de Marca -->
                           <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
                             
@@ -94,7 +94,7 @@
                         </div>
                       </div>
                       <div class="table-responsive">
-                      <table mat-table [dataSource]="dataSourceModelo">
+                      <table mat-table [dataSource]="dataSourceModelo" class="table table-sm mb-0 text-black" >
                         <!-- Columnas de la tabla de Modelo -->
                         <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsParametroSchema">
                           <th mat-header-cell  *matHeaderCellDef [ngSwitch]="col.key" style="text-align: center;">
@@ -158,7 +158,7 @@
                         </div>
                       </div>
                       <div class="table-responsive">
-                      <table mat-table [dataSource]="dataSourceVehiculo" style="margin-top: 5px;">
+                      <table mat-table [dataSource]="dataSourceVehiculo" class="table table-sm mb-0 text-black"  style="margin-top: 5px;">
                         <!-- Columnas de la tabla de Tipo Vehículo -->
                         <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
                           <th mat-header-cell  *matHeaderCellDef [ngSwitch]="col.key" style="text-align: center;">

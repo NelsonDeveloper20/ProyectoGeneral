@@ -75,7 +75,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    
+    console.log("CERRANDO HEADER");
       takeUntil(this._destroying$)
     this.authService.logout(); 
     
